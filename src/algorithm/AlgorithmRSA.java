@@ -3,7 +3,6 @@ package algorithm;
 import alphabet.Alphabet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,7 @@ public class AlgorithmRSA {
 
     private final long p = 307;
     private final long q = 151;
-    private final long e = 11;
+    private  long e = 11;
 
 
     Alphabet alphabet = new Alphabet();
@@ -32,15 +31,20 @@ public class AlgorithmRSA {
     // d мультипликативно обратное к числу e по модулю phi(n),
     // т.e. число, удовлетворяющее сравнению d * e ? 1 (mod phi(n))
     private long calculateD() {
-        long k = 1;
-
-        while (true) {
-            k += z;
-
-            if (k % e == 0)
-                return k / e;
+//        long k = 1;
+//
+//        while (true) {
+//            k += z;
+//
+//            if (k % e == 0)
+//                return k / e;
+//        }
+        while(z != 0){
+            long temp = e % z;
+            e = z;
+            z = temp;
         }
-
+        return e;
     }
 
     private StringBuilder encodeMessage(char[] rawData) {
@@ -78,7 +82,7 @@ public class AlgorithmRSA {
 
         for (Long value :
                 mergedMessage) {
-            result.append(powerFast(value, e, n));
+            result.append(modExp(value, e, n));
             result.append(" ");
         }
         return result;
@@ -89,7 +93,7 @@ public class AlgorithmRSA {
 
         for (long value :
                 encodedMessage) {
-            decryptedMessage.add(powerFast(value, d, n));
+            decryptedMessage.add(modExp(value, d, n));
         }
 
         List<Integer> unmergedMessage = unmerge(decryptedMessage);
@@ -133,7 +137,7 @@ public class AlgorithmRSA {
         return encodedLetters;
     }
 
-    private long powerFast(long base, long x, long p) {
+    private long modExp(long base, long x, long p) {
         long y = 1;
         long s = base;
         long x_2;
